@@ -1,7 +1,10 @@
-
 /**
  * Module dependencies.
  */
+
+// Load environment variables FIRST
+import dotenv from 'dotenv'
+dotenv.config()
 
 import app from '../app'
 import http from 'http'

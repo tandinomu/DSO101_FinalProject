@@ -1,0 +1,22 @@
+# Test environment with compatible Node version
+FROM node:16-alpine
+
+WORKDIR /app
+
+# Environment variables
+ENV NODE_OPTIONS=--max_old_space_size=4096
+
+# Install dependencies
+COPY package.json ./
+COPY sync-package-lock ./
+RUN npm install
+
+# Copy test files
+COPY nodemon.json ./
+COPY tsconfig.json ./
+COPY jest.config.js ./
+COPY src ./src
+COPY __tests__ ./__tests__
+
+# Don't copy database directory for tests
+CMD [ "npm", "test" ]

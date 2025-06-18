@@ -1,0 +1,18 @@
+version: '3.4'
+services:
+  backend-test:
+    build:
+      context: ../backend/
+      dockerfile: Dockerfile.test
+    working_dir: /app
+    environment:
+      NODE_ENV: test
+    volumes:
+      - "test-reports:/app/test-reports"
+      - "test-coverage:/app/coverage"
+
+volumes:
+  test-reports:
+    driver: local
+  test-coverage:
+    driver: local
