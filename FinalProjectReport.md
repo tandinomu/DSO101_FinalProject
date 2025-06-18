@@ -146,7 +146,80 @@ Error: connect ECONNREFUSED 127.0.0.1:5432
 - Application configured to connect to `localhost:5432`
 - PostgreSQL not installed on development machine
 - No local database server running
-- Missing environment configuration for alternative database solutio
+- Missing environment configuration for alternative database solution
+
+## 4. React Build Failures in GitHub Actions
+
+**Issue Description:**
+```
+ERROR: process "/bin/sh -c npm run build" did not complete successfully: exit code: 2
+```
+
+**Environment Context:**
+-  **Local Development:** Builds work perfectly in VSCode and local Docker
+-  **GitHub Actions:** Consistent build failures with exit code 2
+-  **CI/CD Pipeline:** Unable to complete Stage 2 requirements
+
+**Technical Details:**
+```dockerfile
+# This command fails in CI but works locally:
+RUN npm run build
+```
+
+![error](./assets/errror3.png)
+
+**Attempted Solutions:**
+
+#### Solution 1: Memory Optimization
+```dockerfile
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV CI=true
+ENV GENERATE_SOURCEMAP=false
+```
+**Result:** Partial improvement but issue persisted
+
+#### Solution 2: Dependency Management
+```dockerfile
+RUN npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+```
+**Result:** Dependencies installed successfully, build still failed
+
+#### Solution 3: Environment Variable Tuning
+```dockerfile
+ENV DISABLE_ESLINT_PLUGIN=true
+ENV NODE_ENV=production
+```
+**Result:** No significant improvement
+
+#### Solution 4: Multi-Strategy Build Approach
+```dockerfile
+RUN (npm run build) || \
+    (npx react-scripts build) || \
+    (npx webpack --mode=production) || \
+    (echo "All build methods failed" && exit 1)
+```
+**Result:** All build strategies failed in CI environment
+
+---
+
+### 5. nginx Configuration Challenges
+
+![nginx](./assets/error2.png)
+
+**Issue Description:**
+```
+[emerg] host not found in upstream "backend" in /etc/nginx/conf.d/default.conf:12
+nginx: configuration file /etc/nginx.conf test failed
+```
+
+**Root Cause:** nginx testing configuration during Docker build when backend service doesn't exist
+
+**Solution Applied:**
+- Removed `nginx -t` from Docker build stage
+- Used variables in nginx config: `set $backend_upstream http://backend:3000;`
+- Added graceful error handling for unavailable backend
+
+**Result:** Successfully resolved
 
 ## Conclusion
 
@@ -159,4 +232,5 @@ Successfully implemented a complete DevSecOps pipeline featuring:
 - Secure credential management
 
 The project demonstrates practical application of modern DevOps practices including infrastructure as code, automated testing, and continuous deployment strategies.
+
 
