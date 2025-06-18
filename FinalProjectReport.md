@@ -111,6 +111,26 @@ Go to your GitHub repo → Settings → Secrets and Variables → Repository sec
 
 ![success](./assets/successfulaction.png)
 
+
+### Stage 4: Deploy to Render
+ 
+**Goal:** Deploy my BMI Calculator to the cloud using Render
+
+#### Step 1:  Deploy Database 
+
+Create PostgreSQL Service
+![database](./assets/renderdatabase.png)
+
+
+ **STEP 3: Deploy Backend from Docker Hub**
+
+### Created Backend Web Service
+
+### 3.1 Configure Backend Service
+
+**Environment Variables:** 
+![ev](./assets/evforbackend.png)
+
 ## Challenges and Solutions
 
 ### 1. npm Command Not Found Error
@@ -251,16 +271,13 @@ Create PostgreSQL Service
 
 ### Created Backend Web Service
 
-### 3.2 Configure Backend Service
+### 3.1 Configure Backend Service
 
 **Environment Variables:** 
 ![ev](./assets/evforbackend.png)
 
 
-### 3.3 Deploy Backend
-1. Click **"Create Web Service"**
-2. Wait for deployment (5-10 minutes)
-3. Check logs for any errors
+
 
 
 
