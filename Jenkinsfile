@@ -16,12 +16,12 @@ pipeline {
             steps {
                 script {
                     def commitMsg = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
-                    echo "🔍 Checking commit message: ${commitMsg}"
+                    echo "Checking commit message: ${commitMsg}"
                     if (commitMsg.contains("@push")) {
-                        echo "✅ Found @push trigger in commit message!"
-                        echo "🚀 Proceeding with pipeline automation..."
+                        echo "Found @push trigger in commit message!"
+                        echo " Proceeding with pipeline automation..."
                     } else {
-                        error("❌ Commit message does not contain '@push'. Aborting pipeline.")
+                        error("Commit message does not contain '@push'. Aborting pipeline.")
                     }
                 }
             }
@@ -29,7 +29,7 @@ pipeline {
         
         stage('Environment Check') {
             steps {
-                echo "🔧 Checking environment setup..."
+                echo " Checking environment setup..."
                 sh '''
                     echo "Node.js version: $(node --version)"
                     echo "npm version: $(npm --version)"
@@ -43,7 +43,7 @@ pipeline {
         
         stage('Build') {
             steps {
-                echo "🔨 Building BMI Calculator application..."
+                echo " Building BMI Calculator application..."
                 script {
                     try {
                         if (fileExists('backend/package.json')) {
@@ -51,11 +51,11 @@ pipeline {
                                 sh '''
                                     echo "Installing backend dependencies..."
                                     npm install
-                                    echo "✅ Backend dependencies installed successfully"
+                                    echo " Backend dependencies installed successfully"
                                 '''
                             }
                         } else {
-                            echo "📝 No backend/package.json found - creating minimal setup"
+                            echo " No backend/package.json found - creating minimal setup"
                             sh '''
                                 mkdir -p backend
                                 echo "Creating basic package.json..."
@@ -68,14 +68,14 @@ pipeline {
                                 sh '''
                                     echo "Installing frontend dependencies..."
                                     npm install || echo "Frontend install completed with warnings"
-                                    echo "✅ Frontend dependencies processed"
+                                    echo " Frontend dependencies processed"
                                 '''
                             }
                         } else {
-                            echo "📝 No frontend/package.json found - skipping frontend build"
+                            echo " No frontend/package.json found - skipping frontend build"
                         }
                     } catch (Exception e) {
-                        echo "⚠️ Build step encountered an issue: ${e.getMessage()}"
+                        echo " Build step encountered an issue: ${e.getMessage()}"
                         echo "Continuing with pipeline..."
                     }
                 }
@@ -84,18 +84,18 @@ pipeline {
         
         stage('Test') {
             steps {
-                echo "🧪 Running BMI Calculator tests..."
+                echo " Running BMI Calculator tests..."
                 script {
                     try {
                         dir('backend') {
                             sh '''
                                 echo "Running backend tests..."
                                 npm test
-                                echo "✅ All tests passed successfully"
+                                echo " All tests passed successfully"
                             '''
                         }
                     } catch (Exception e) {
-                        echo "⚠️ Test execution completed with issues: ${e.getMessage()}"
+                        echo "Test execution completed with issues: ${e.getMessage()}"
                         echo "Continuing with pipeline..."
                     }
                 }
@@ -110,17 +110,17 @@ pipeline {
                     passwordVariable: 'GITHUB_TOKEN'
                 )]) {
                     sh '''
-                        echo "🚀 Configuring Git for automated push..."
+                        echo "Configuring Git for automated push..."
                         git config user.name "${GITHUB_USER}"
                         git config user.email "${GITHUB_USER}@users.noreply.github.com"
                         
-                        echo "🔗 Setting up remote URL with authentication..."
+                        echo " Setting up remote URL with authentication..."
                         git remote set-url origin https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/tandinomu/DSO101_FinalProject.git
                         
-                        echo "📤 Pushing changes to GitHub..."
+                        echo " Pushing changes to GitHub..."
                         git push origin HEAD:main
                         
-                        echo "✅ Successfully pushed to GitHub repository!"
+                        echo "Successfully pushed to GitHub repository!"
                     '''
                 }
             }
@@ -131,8 +131,8 @@ pipeline {
         always {
             script {
                 def studentNum = env.STUDENT_NUMBER ?: '02230302'
-                echo "🏁 Pipeline completed for student ${studentNum}"
-                echo "📊 Build Summary:"
+                echo " Pipeline completed for student ${studentNum}"
+                echo " Build Summary:"
                 echo "   - Repository: DSO101_FinalProject" 
                 echo "   - Student: ${studentNum}"
                 echo "   - Trigger: @push automation"
@@ -140,13 +140,13 @@ pipeline {
             }
         }
         success {
-            echo "🎉 ✅ BUILD SUCCESS! Jenkins automation working perfectly!"
-            echo "🚀 Code has been automatically pushed to GitHub"
-            echo "📋 Student 02230302 - All pipeline stages completed"
+            echo " BUILD SUCCESS! Jenkins automation working perfectly!"
+            echo " Code has been automatically pushed to GitHub"
+            echo " Student 02230302 - All pipeline stages completed"
         }
         failure {
-            echo "🚨 ❌ BUILD FAILED! Check the logs above for details"
-            echo "🔍 Common issues: credentials, network, or dependency problems"
+            echo " BUILD FAILED! Check the logs above for details"
+            echo " Common issues: credentials, network, or dependency problems"
         }
     }
 }

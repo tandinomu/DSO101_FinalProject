@@ -25,69 +25,69 @@ jobs:
       
       - name: Build and Push Frontend
         run: |
-          echo "🎨 Building Frontend using your existing Dockerfiles..."
+          echo " Building Frontend using your existing Dockerfiles..."
           
           # Build development frontend
-          echo "📦 Building Frontend Development Image..."
+          echo "Building Frontend Development Image..."
           docker build -f frontend/Dockerfile.dev -t ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:dev ./frontend
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:dev
-          echo "✅ Frontend dev image pushed"
+          echo " Frontend dev image pushed"
           
           # Build production frontend
-          echo "📦 Building Frontend Production Image..."
+          echo " Building Frontend Production Image..."
           docker build -f frontend/Dockerfile.prod -t ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:latest ./frontend
           docker build -f frontend/Dockerfile.prod -t ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:prod ./frontend
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:prod
-          echo "✅ Frontend production images pushed"
+          echo " Frontend production images pushed"
           
-          echo "🎯 Frontend build complete!"
+          echo " Frontend build complete!"
       
       - name: Build and Push Backend
         run: |
-          echo "🔧 Building Backend using your existing Dockerfiles..."
+          echo " Building Backend using your existing Dockerfiles..."
           
           # Build development backend
-          echo "📦 Building Backend Development Image..."
+          echo " Building Backend Development Image..."
           docker build -f backend/Dockerfile.dev -t ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:dev ./backend
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:dev
-          echo "✅ Backend dev image pushed"
+          echo " Backend dev image pushed"
           
           # Build production backend
-          echo "📦 Building Backend Production Image..."
+          echo " Building Backend Production Image..."
           docker build -f backend/Dockerfile.prod -t ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:latest ./backend
           docker build -f backend/Dockerfile.prod -t ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:prod ./backend
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:prod
-          echo "✅ Backend production images pushed"
+          echo " Backend production images pushed"
           
           # Build test backend (optional)
-          echo "📦 Building Backend Test Image..."
+          echo " Building Backend Test Image..."
           docker build -f backend/Dockerfile.test -t ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:test ./backend
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:test
-          echo "✅ Backend test image pushed"
+          echo " Backend test image pushed"
           
-          echo "🎯 Backend build complete!"
+          echo " Backend build complete!"
       
       # Optional: DB image if not using Render's managed DB
       - name: Build and Push DB
         run: |
-          echo "🗄️ Setting up Database image..."
+          echo " Setting up Database image..."
           
           # Using PostgreSQL from your docker-compose configuration
-          echo "📦 Tagging PostgreSQL image for your project..."
+          echo "Tagging PostgreSQL image for your project..."
           docker pull postgres:12-alpine
           docker tag postgres:12-alpine ${{ secrets.DOCKERHUB_USERNAME }}/dso101-database:postgres-12-alpine
           docker tag postgres:12-alpine ${{ secrets.DOCKERHUB_USERNAME }}/dso101-database:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/dso101-database:postgres-12-alpine
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/dso101-database:latest
-          echo "✅ Database image tagged and pushed"
+          echo " Database image tagged and pushed"
           
-          echo "🎯 Database setup complete!"
+          echo " Database setup complete!"
       
       - name: Validate Docker Compose Integration
         run: |
-          echo "🔍 Validating your existing docker-compose configuration..."
+          echo " Validating your existing docker-compose configuration..."
           
           # Create environment file for testing
           cat > .env.test << EOF
@@ -99,78 +99,78 @@ jobs:
           EOF
           
           # Test production compose
-          echo "📋 Testing docker-compose-prod.yml..."
+          echo " Testing docker-compose-prod.yml..."
           export $(cat .env.test | xargs)
           if docker-compose -f docker/docker-compose-prod.yml config --quiet; then
-            echo "✅ Production compose configuration is valid"
+            echo " Production compose configuration is valid"
           else
-            echo "⚠️ Production compose has validation issues"
+            echo " Production compose has validation issues"
           fi
           
           # Test development compose
-          echo "📋 Testing docker-compose-dev.yml..."
+          echo " Testing docker-compose-dev.yml..."
           if docker-compose -f docker/docker-compose-dev.yml config --quiet; then
-            echo "✅ Development compose configuration is valid"
+            echo " Development compose configuration is valid"
           else
-            echo "⚠️ Development compose has validation issues"
+            echo " Development compose has validation issues"
           fi
           
-          echo "🎯 Docker Compose validation complete!"
+          echo " Docker Compose validation complete!"
       
       - name: Test Build Quality
         run: |
-          echo "🧪 Testing image quality and security..."
+          echo " Testing image quality and security..."
           
           # Test that images are properly built
-          echo "📊 Checking image sizes..."
+          echo " Checking image sizes..."
           docker images | grep ${{ secrets.DOCKERHUB_USERNAME }}/dso101
           
           # Basic security check
-          echo "🔒 Running basic security checks..."
+          echo " Running basic security checks..."
           docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
             -v $(pwd):/tmp/app \
             aquasec/trivy:latest image --exit-code 0 --severity HIGH,CRITICAL \
             ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:latest || echo "⚠️ Security scan completed with warnings"
           
-          echo "🎯 Quality tests complete!"
+          echo " Quality tests complete!"
       
       - name: Generate Professional Build Summary
         run: |
           echo "=========================================="
-          echo "  🚀 STAGE 2: DOCKER BUILD COMPLETE"
+          echo "  STAGE 2: DOCKER BUILD COMPLETE"
           echo "     Student: 02230302"
           echo "     BMI Calculator Project"
           echo "=========================================="
           echo ""
-          echo "📦 IMAGES SUCCESSFULLY PUSHED TO DOCKER HUB:"
+          echo "IMAGES SUCCESSFULLY PUSHED TO DOCKER HUB:"
           echo ""
-          echo "   🎨 Frontend Images:"
-          echo "      ✅ ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:latest"
-          echo "      ✅ ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:prod"
-          echo "      ✅ ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:dev"
+          echo "    Frontend Images:"
+          echo "      ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:latest"
+          echo "       ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:prod"
+          echo "       ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:dev"
           echo ""
-          echo "   🔧 Backend Images:"
-          echo "      ✅ ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:latest"
-          echo "      ✅ ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:prod"
-          echo "      ✅ ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:dev"
-          echo "      ✅ ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:test"
+          echo "   Backend Images:"
+          echo "       ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:latest"
+          echo "      ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:prod"
+          echo "      ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:dev"
+          echo "      ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:test"
           echo ""
-          echo "   🗄️ Database Images:"
-          echo "      ✅ ${{ secrets.DOCKERHUB_USERNAME }}/dso101-database:latest"
-          echo "      ✅ ${{ secrets.DOCKERHUB_USERNAME }}/dso101-database:postgres-12-alpine"
+          echo "   Database Images:"
+          echo "       ${{ secrets.DOCKERHUB_USERNAME }}/dso101-database:latest"
+          echo "       ${{ secrets.DOCKERHUB_USERNAME }}/dso101-database:postgres-12-alpine"
           echo ""
-          echo "🏗️ PROFESSIONAL ARCHITECTURE USED:"
-          echo "   ✅ Multi-stage Dockerfiles (dev/prod/test)"
-          echo "   ✅ Nginx configuration for frontend"
-          echo "   ✅ Environment-specific compose files"
-          echo "   ✅ BMI-specific volume management"
-          echo "   ✅ Professional project structure"
+          echo "PROFESSIONAL ARCHITECTURE USED:"
+          echo "   Multi-stage Dockerfiles (dev/prod/test)"
+          echo "   Nginx configuration for frontend"
+          echo "    Environment-specific compose files"
+          echo "   BMI-specific volume management"
+          echo "   Professional project structure"
           echo ""
-          echo "📊 BUILD STATISTICS:"
-          echo "   🚀 Total Images Built: 8"
-          echo "   🎯 Environments: Development, Production, Test"
-          echo "   ⚡ Build Status: SUCCESS"
-          echo "   🔒 Security: Scanned"
+          echo " BUILD STATISTICS:"
+          echo "    Total Images Built: 8"
+          echo "    Environments: Development, Production, Test"
+          echo "    Build Status: SUCCESS"
+          echo "   Security: Scanned"
           echo ""
-          echo "🎉 READY FOR STAGE 3: DEPLOYMENT TO RENDER!"
+          echo "READY FOR STAGE 3: DEPLOYMENT TO RENDER!"
           echo "=========================================="

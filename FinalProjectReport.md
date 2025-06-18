@@ -4,38 +4,159 @@
 
 A comprehensive BMI Calculator application with full-stack implementation, automated testing, and CI/CD pipeline integration. The project demonstrates modern software development practices including containerization, automated testing, and continuous integration.
 
-**STAGE 1 COMPLETION: BMI Calculator & Testing**
+### Tech Stack
+- **Frontend:** React
+- **Backend:** Node.js/Express
+- **Database:** PostgreSQL
+- **CI/CD:** Jenkins
+- **Containerization:** Docker & Docker Compose
+- **Version Control:** GitHub
+- **Testing:** Jest
 
-** Successfully Implemented:**
+### BMI Calculator Implementation
 
-#### **1. BMI Calculation Service**
-- **Formula:** `BMI = weight(kg) / (height(m))²`
-- **Categories:** Underweight (<18.5), Normal (18.5-24.9), Overweight (25-29.9), Obese (≥30)
-- **Validation:** Input type checking, range validation, edge case handling
-- **Performance:** Sub-100ms calculation for 1000+ operations
+### Features Added
+- **Input Fields:** Height (cm), Weight (kg), Age
+- **BMI Calculation:** Accurate BMI computation with category classification
+- **Data Persistence:** Recent BMI records saved to PostgreSQL database
+- **API Endpoints:** RESTful endpoints for BMI calculations
+- **Validation:** Input validation and error handling
 
-![bmi](./assets/curl.png)
-![result](./assets/curlresult.png)
 
-#### **2. Comprehensive Test Suite**
-```bash
-BMI Calculator Tests - Stage 1: 13/13 PASSED
-BMI Calculator Service: 15/15 PASSED  
-Total Core Tests: 30/30 PASSED
+### API Endpoints
+- `POST /api/bmi/calculate` - Calculate and store BMI
+- `GET /api/bmi/calculate` - Retrieve BMI calculations
+- `GET /api/health` - Health check endpoint
+
+### Manual Testing
+![API Response](./assets/curlresult.png)
+![cURL API Test](./assets/curl.png)
+
+## Stage 1: Docker Configuration
+
+### Docker Volumes Configuration
+Configured persistent storage for BMI data using Docker volumes in `docker-compose.yml`:
+
+```yaml
+volumes:
+  postgres_data:
+    driver: local
+  
+services:
+  postgres:
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 ```
 
-#### **3. Docker Integration**
-- **Volume Configuration:** `docker_test-reports`, `docker_test-coverage`
-- **Cross-platform Compatibility:** Node 16 Alpine
-- **Automated Test Execution:** Docker Compose test environment
+### Testing with Docker Compose
+Successfully implemented and ran tests using Docker Compose:
 
----
-
-**Test Results Summary**
-
-### **Local Test Execution:**
-![test](./assets/tests.png)
-
-### **Docker Test Execution:**
 ```bash
-docker-compose -f docker-compose-simple-test.yml up --abort-on-container-exit
+docker-compose -f docker-compose-simple-test.yml up --build --abort-on-container-exit
+```
+
+![Docker Build Success](./assets/dockerbuild.png)
+![dockerbuild](./assets/tests.png)
+
+## Stage 2: Jenkins Pipeline Setup
+
+### Pipeline Configuration
+Created Jenkins pipeline: `02230302_app_pipeline`
+
+![pipeline](./assets/pipeline.png)
+![pipelineconfiguration](./assets/pipelineconfiguration.png)
+
+### GitHub Integration
+- **Personal Access Token:** Configured with repository permissions
+- **Credentials Management:** Secure storage in Jenkins credential store
+- **Automated Push:** Triggered by @push in commit messages
+
+### Jenkins Credentials Setup
+![GitHub Credentials](./assets/creategithubcredentials.png)
+![Credentials Management](./assets/githubcredentials.png)
+
+#### Successful Pipeline Execution:
+![Pipeline Success](./assets/buildsuccess.png)
+
+## Testing and Validation
+
+### Test Suite Coverage
+- **BMI Calculation Logic:** Validates correct BMI computation
+- **Category Classification:** Tests underweight, normal, overweight, obese categories
+- **Edge Cases:** Handles boundary values and invalid inputs
+- **Data Validation:** Ensures proper input sanitization
+- **Performance:** Validates response times
+
+### Test Results
+![Test Results in Jenkins](./assets/testpassedinjenkins.png)
+![reportfilegrnerated](./assets/%20reportfilegenerated.png)
+
+
+## Stage 3: GitHub Actions Pipeline for Docker Builds
+
+#### Steps 1:
+Store Docker Hub Credentials in GitHub Secrets:
+
+Go to your GitHub repo → Settings → Secrets and Variables → Repository secrets
+
+![credentials](./assets/stage2.2step1.png)
+
+#### Step 2: Created .github/workflows/docker-build.yml:
+
+![workflow](./assets/Screenshot%202025-06-18%20at%2010.53.41 PM.png)
+
+## Challenges and Solutions
+
+
+
+Application configured to connect to localhost:5432
+PostgreSQL not installed on development machine
+No local database server running
+Missing environment configuration for alternative database solutions
+
+### 1. npm Command Not Found Error
+**Issue:** Jenkins couldn't find npm during build process
+**Solution:** Added Node.js tool installation in pipeline configuration
+
+![builderror](./assets/builderror2.png)
+
+### 2. GitHub Push Permission Denied
+**Issue:** Initial GitHub push failures due to authentication
+**Solution:** 
+- Created fine-grained Personal Access Token
+- Configured proper repository permissions
+- Updated Jenkins credentials with PAT
+
+![githubcredentials](./assets/buildfailure1.png)
+![ng](./assets/newgithubcredentials.png)
+
+### 3. Database Connection Issues
+
+**Problem**: Application unable to establish database connection.
+
+**Error Log**:
+```
+Database connection error
+AggregateError [ECONNREFUSED]:
+Error: connect ECONNREFUSED ::1:5432
+Error: connect ECONNREFUSED 127.0.0.1:5432
+```
+
+**Analysis**:
+- Application configured to connect to `localhost:5432`
+- PostgreSQL not installed on development machine
+- No local database server running
+- Missing environment configuration for alternative database solutio
+
+## Conclusion
+
+Successfully implemented a complete DevSecOps pipeline featuring:
+- BMI Calculator service integration
+- Docker containerization with persistent volumes
+- Jenkins CI/CD pipeline with GitHub automation
+- Comprehensive testing suite
+- Automated deployment triggers
+- Secure credential management
+
+The project demonstrates practical application of modern DevOps practices including infrastructure as code, automated testing, and continuous deployment strategies.
+
