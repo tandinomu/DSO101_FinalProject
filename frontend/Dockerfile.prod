@@ -11,10 +11,13 @@ ENV PATH=/app/node_modules/.bin:$PATH
 COPY package*.json ./
 
 # Clean install dependencies
-RUN npm ci --legacy-peer-deps
+RUN npm clean-install
 
 # Copy source code and build files
-COPY . .
+COPY src ./src
+COPY public ./public
+COPY tsconfig.json ./
+COPY webpack.config.ts ./
 
 # Build app
 RUN npm run build
