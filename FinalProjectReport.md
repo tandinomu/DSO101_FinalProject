@@ -1,4 +1,4 @@
-**DSO101 Final Project - BMI Calculator Application**
+# DSO101 Final Project - BMI Calculator Application
 
 **Project Overview**
 
