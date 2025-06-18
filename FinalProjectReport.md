@@ -14,6 +14,9 @@ A comprehensive BMI Calculator application with full-stack implementation, autom
 - **Validation:** Input type checking, range validation, edge case handling
 - **Performance:** Sub-100ms calculation for 1000+ operations
 
+![bmi](./assets/curl.png)
+![result](./assets/curlresult.png)
+
 #### **2. Comprehensive Test Suite**
 ```bash
 BMI Calculator Tests - Stage 1: 13/13 PASSED
