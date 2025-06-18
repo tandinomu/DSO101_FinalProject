@@ -1,10 +1,10 @@
 # DSO101 Final Project - BMI Calculator Application
 
-**Project Overview**
+### Project Overview
 
 A comprehensive BMI Calculator application with full-stack implementation, automated testing, and CI/CD pipeline integration. The project demonstrates modern software development practices including containerization, automated testing, and continuous integration.
 
-### Tech Stack
+#### Tech Stack
 - **Frontend:** React
 - **Backend:** Node.js/Express
 - **Database:** PostgreSQL
@@ -13,9 +13,9 @@ A comprehensive BMI Calculator application with full-stack implementation, autom
 - **Version Control:** GitHub
 - **Testing:** Jest
 
-### BMI Calculator Implementation
+#### BMI Calculator Implementation
 
-### Features Added
+#### Features Added
 - **Input Fields:** Height (cm), Weight (kg), Age
 - **BMI Calculation:** Accurate BMI computation with category classification
 - **Data Persistence:** Recent BMI records saved to PostgreSQL database
@@ -23,12 +23,12 @@ A comprehensive BMI Calculator application with full-stack implementation, autom
 - **Validation:** Input validation and error handling
 
 
-### API Endpoints
+#### API Endpoints
 - `POST /api/bmi/calculate` - Calculate and store BMI
 - `GET /api/bmi/calculate` - Retrieve BMI calculations
 - `GET /api/health` - Health check endpoint
 
-### Manual Testing
+#### Manual Testing
 ![API Response](./assets/curlresult.png)
 ![cURL API Test](./assets/curl.png)
 
@@ -58,41 +58,41 @@ docker-compose -f docker-compose-simple-test.yml up --build --abort-on-container
 ![Docker Build Success](./assets/dockerbuild.png)
 ![dockerbuild](./assets/tests.png)
 
-## Stage 2: Jenkins Pipeline Setup
+### Stage 2: Jenkins Pipeline Setup
 
-### Pipeline Configuration
+#### Pipeline Configuration
 Created Jenkins pipeline: `02230302_app_pipeline`
 
 ![pipeline](./assets/pipeline.png)
 ![pipelineconfiguration](./assets/pipelineconfiguration.png)
 
-### GitHub Integration
+#### GitHub Integration
 - **Personal Access Token:** Configured with repository permissions
 - **Credentials Management:** Secure storage in Jenkins credential store
 - **Automated Push:** Triggered by @push in commit messages
 
-### Jenkins Credentials Setup
+#### Jenkins Credentials Setup
 ![GitHub Credentials](./assets/creategithubcredentials.png)
 ![Credentials Management](./assets/githubcredentials.png)
 
 #### Successful Pipeline Execution:
 ![Pipeline Success](./assets/buildsuccess.png)
 
-## Testing and Validation
+#### Testing and Validation
 
-### Test Suite Coverage
+#### Test Suite Coverage
 - **BMI Calculation Logic:** Validates correct BMI computation
 - **Category Classification:** Tests underweight, normal, overweight, obese categories
 - **Edge Cases:** Handles boundary values and invalid inputs
 - **Data Validation:** Ensures proper input sanitization
 - **Performance:** Validates response times
 
-### Test Results
+#### Test Results
 ![Test Results in Jenkins](./assets/testpassedinjenkins.png)
 ![reportfilegrnerated](./assets/%20reportfilegenerated.png)
 
 
-## Stage 3: GitHub Actions Pipeline for Docker Builds
+### Stage 3: GitHub Actions Pipeline for Docker Builds
 
 #### Steps 1:
 Store Docker Hub Credentials in GitHub Secrets:
@@ -105,7 +105,7 @@ Go to your GitHub repo → Settings → Secrets and Variables → Repository sec
 
 ![workflow](./assets/Screenshot%202025-06-18%20at%2010.53.41 PM.png)
 
-###  Verification
+####  Verification
 - **GitHub Actions:**  All builds successful
 - **CI/CD Pipeline:** Automated deployment working
 
@@ -124,22 +124,22 @@ Create PostgreSQL Service
 
  **STEP 3: Deploy Backend from Docker Hub**
 
-### Created Backend Web Service
+#### Created Backend Web Service
 
-### 3.1 Configure Backend Service
+#### 3.1 Configure Backend Service
 
 **Environment Variables:** 
 ![ev](./assets/evforbackend.png)
 
-## Challenges and Solutions
+### Challenges and Solutions
 
-### 1. npm Command Not Found Error
+#### 1. npm Command Not Found Error
 **Issue:** Jenkins couldn't find npm during build process
 **Solution:** Added Node.js tool installation in pipeline configuration
 
 ![builderror](./assets/builderror2.png)
 
-### 2. GitHub Push Permission Denied
+#### 2. GitHub Push Permission Denied
 **Issue:** Initial GitHub push failures due to authentication
 **Solution:** 
 - Created fine-grained Personal Access Token
@@ -149,7 +149,7 @@ Create PostgreSQL Service
 ![githubcredentials](./assets/buildfailure1.png)
 ![ng](./assets/newgithubcredentials.png)
 
-### 3. Database Connection Issues
+#### 3. Database Connection Issues
 
 **Problem**: Application unable to establish database connection.
 
@@ -167,7 +167,7 @@ Error: connect ECONNREFUSED 127.0.0.1:5432
 - No local database server running
 - Missing environment configuration for alternative database solution
 
-## 4. React Build Failures in GitHub Actions
+#### 4. React Build Failures in GitHub Actions
 
 **Issue Description:**
 ```
@@ -220,7 +220,7 @@ RUN (npm run build) || \
 **Result:** All build strategies failed in CI environment
 
 
-### 5. nginx Configuration Challenges
+#### 5. nginx Configuration Challenges
 
 ![nginx](./assets/error2.png)
 
@@ -237,7 +237,7 @@ nginx: configuration file /etc/nginx.conf test failed
 - Used variables in nginx config: `set $backend_upstream http://backend:3000;`
 - Added graceful error handling for unavailable backend
 
-## 6: Missing TypeScript Type Definitions in Production
+#### 6: Missing TypeScript Type Definitions in Production
 
 ### Problem
 ```bash
@@ -251,11 +251,11 @@ src/app.ts(5,18): error TS7016: Could not find a declaration file for module 'co
 ![error](./assets/backenderrorrender.png)
 
 
-## Conclusion
+### Conclusion
 
 This DevSecOps project successfully demonstrates the implementation of a complete CI/CD pipeline for a PERN stack application. Through the integration of a BMI calculator service and the deployment of automated testing, building, and deployment workflows, students gain hands-on experience with industry-standard tools and practices.
 
-### Key Achievements
+#### Key Achievements
 
 - **Full-Stack Development**: Enhanced a PERN application with additional functionality and comprehensive testing
 - **Containerization**: Configured Docker environments with proper volume management and multi-service orchestration
