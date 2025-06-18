@@ -232,3 +232,277 @@ Successfully implemented a complete DevSecOps pipeline featuring:
 The project demonstrates practical application of modern DevOps practices including infrastructure as code, automated testing, and continuous deployment strategies.
 
 
+
+
+
+
+
+### Stage 3: Deploy to Render
+ 
+**Goal:** Deploy my BMI Calculator to the cloud using Render
+
+#### Step 1:  Deploy Database 
+
+Create PostgreSQL Service
+![database](./assets/renderdatabase.png)
+
+
+ **STEP 3: Deploy Backend from Docker Hub**
+
+### Created Backend Web Service
+
+### 3.2 Configure Backend Service
+
+**Environment Variables:** 
+![ev](./assets/evforbackend.png)
+
+
+### 3.3 Deploy Backend
+1. Click **"Create Web Service"**
+2. Wait for deployment (5-10 minutes)
+3. Check logs for any errors
+
+
+
+## 🎨 **STEP 4: Deploy Frontend from Docker Hub**
+
+### 4.1 Create Frontend Web Service
+1. **Render Dashboard** → **"New +"** → **"Web Service"**
+2. **Choose:** **"Deploy an existing image from a registry"**
+3. **Image URL:** `yourdockerhub/dso101-frontend:latest`
+   - Replace `yourdockerhub` with your actual Docker Hub username
+
+### 4.2 Configure Frontend Service
+**Basic Settings:**
+- **Name:** `dso101-frontend`
+- **Region:** Same as backend/database
+- **Plan:** **Free**
+
+**Environment Variables:**
+```
+REACT_APP_API_URL = https://dso101-backend.onrender.com
+PORT = 10000
+NODE_ENV = production
+```
+*Use YOUR actual backend URL from Step 3*
+
+### 4.3 Deploy Frontend
+1. Click **"Create Web Service"**
+2. Wait for deployment (5-10 minutes)
+3. Check deployment logs
+
+**✅ Checkpoint:** Frontend service shows **"Live"** status and you can access `https://dso101-frontend.onrender.com`
+
+---
+
+## 🧪 **STEP 5: Test Everything Works**
+
+### 5.1 Test Individual Services
+1. **Database:** Should show **"Available"** in Render dashboard
+2. **Backend:** Visit `https://dso101-backend.onrender.com` - should show API response
+3. **Frontend:** Visit `https://dso101-frontend.onrender.com` - should load BMI calculator
+
+### 5.2 Test End-to-End Functionality
+1. **Open your frontend URL** in browser
+2. **Enter BMI data** (height, weight)
+3. **Click Calculate**
+4. **Verify result appears** (means frontend → backend → database → backend → frontend works)
+
+**✅ Checkpoint:** You can calculate BMI successfully on your deployed app
+
+---
+
+## 📸 **STEP 6: Take Screenshots for Documentation**
+
+### 6.1 Create Screenshots Folder
+```bash
+cd /Users/macbookairm4chip/Desktop/Sem4/DSO/DSO101_FinalProject
+mkdir screenshots
+```
+
+### 6.2 Required Screenshots
+Take screenshots of:
+1. **Render Dashboard** showing all 3 services with "Live"/"Available" status
+2. **Database service** configuration page
+3. **Backend service** configuration and environment variables
+4. **Frontend service** configuration and environment variables  
+5. **Working BMI Calculator** on your deployed frontend URL
+6. **GitHub Actions** showing successful deployment workflow
+
+### 6.3 Save Screenshots
+Save them as:
+- `screenshots/render-dashboard.png`
+- `screenshots/database-config.png`
+- `screenshots/backend-config.png`
+- `screenshots/frontend-config.png`
+- `screenshots/working-app.png`
+- `screenshots/github-actions.png`
+
+---
+
+## 📝 **STEP 7: Create GitHub Actions Deployment Workflow**
+
+### 7.1 Create Workflow File
+```bash
+# Navigate to your project
+cd /Users/macbookairm4chip/Desktop/Sem4/DSO/DSO101_FinalProject
+
+# Create workflow directory
+mkdir -p .github/workflows
+
+# Create deploy.yml file
+touch .github/workflows/deploy.yml
+```
+
+### 7.2 Add Workflow Content
+Copy this into `.github/workflows/deploy.yml`:
+
+```yaml
+name: Deploy to Render
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Generate package-lock.json files
+        run: |
+          cd frontend && npm install --package-lock-only --legacy-peer-deps && cd ..
+          cd backend && npm install --package-lock-only && cd ..
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Build and Push Images
+        run: |
+          echo "🚀 Building and pushing updated images..."
+          
+          # Frontend
+          docker build -f frontend/Dockerfile.prod -t ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:latest ./frontend
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/dso101-frontend:latest
+          
+          # Backend  
+          docker build -f backend/Dockerfile.prod -t ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:latest ./backend
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/dso101-backend:latest
+          
+          echo "✅ Images pushed to Docker Hub"
+      
+      - name: Deployment Instructions
+        run: |
+          echo "🚀 DEPLOYMENT READY"
+          echo "Go to Render Dashboard and manually deploy:"
+          echo "1. Backend: https://dashboard.render.com"
+          echo "2. Frontend: https://dashboard.render.com"
+          echo "Images updated on Docker Hub - ready for Render!"
+```
+
+---
+
+## 📚 **STEP 8: Update README with Documentation**
+
+### 8.1 Add Stage 3 Section to README
+Add this to your `README.md`:
+
+```markdown
+## 🚀 Stage 3: Render Deployment ✅
+
+**Status:** Successfully Completed
+
+### 🌐 Live Application
+- **Frontend:** https://dso101-frontend.onrender.com
+- **Backend API:** https://dso101-backend.onrender.com  
+- **Database:** PostgreSQL (Managed by Render)
+
+### 📦 Deployed Services
+- ✅ **Database:** PostgreSQL 12 (bmi_calculator)
+- ✅ **Backend:** Node.js API from Docker Hub
+- ✅ **Frontend:** React App from Docker Hub
+
+### 🔧 Environment Variables Configured
+- **Database:** POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB
+- **Backend:** DATABASE_URL, NODE_ENV, PORT
+- **Frontend:** REACT_APP_API_URL, NODE_ENV, PORT
+
+### 📸 Screenshots
+- [Render Dashboard](screenshots/render-dashboard.png)
+- [Database Configuration](screenshots/database-config.png)
+- [Backend Configuration](screenshots/backend-config.png) 
+- [Frontend Configuration](screenshots/frontend-config.png)
+- [Working Application](screenshots/working-app.png)
+
+### ✅ Verification
+All services deployed successfully with end-to-end BMI calculation functionality working.
+```
+
+---
+
+## 🎯 **STEP 9: Final Commit and Push**
+
+```bash
+# Add all files
+git add .
+
+# Commit everything
+git commit -m "🚀 Complete Stage 3: Render deployment with documentation - Student 02230302"
+
+# Push to trigger GitHub Actions
+git push origin main
+```
+
+---
+
+## 🎉 **Success Checklist**
+
+Mark each as complete:
+- [ ] ✅ Render account created and repository connected
+- [ ] ✅ PostgreSQL database deployed and "Available"
+- [ ] ✅ Backend service deployed and "Live" 
+- [ ] ✅ Frontend service deployed and "Live"
+- [ ] ✅ Environment variables configured correctly
+- [ ] ✅ BMI calculator works end-to-end on deployed app
+- [ ] ✅ All screenshots taken and saved
+- [ ] ✅ GitHub Actions workflow created and running
+- [ ] ✅ README documentation updated
+- [ ] ✅ Everything committed and pushed to GitHub
+
+---
+
+## 🚨 **Common Issues & Quick Fixes**
+
+### Issue 1: Backend can't connect to database
+**Fix:** Check DATABASE_URL format - use the exact "Internal Database URL" from Render
+
+### Issue 2: Frontend can't reach backend
+**Fix:** Update REACT_APP_API_URL to your actual backend URL (https://dso101-backend.onrender.com)
+
+### Issue 3: Services showing "Build failed"
+**Fix:** Check build logs in Render dashboard, usually environment variable issues
+
+### Issue 4: App loads but BMI calculation doesn't work
+**Fix:** Check browser developer tools for API errors, verify CORS settings
+
+---
+
+## 🎯 **You're Done When:**
+- Your BMI calculator works at `https://dso101-frontend.onrender.com`
+- All screenshots are saved in `/screenshots` folder
+- README is updated with Stage 3 documentation
+- GitHub Actions shows successful deployment workflow
+
+**Ready to deploy? Let's go! 🚀**
