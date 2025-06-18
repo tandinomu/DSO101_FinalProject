@@ -1,35 +1,39 @@
-# Production environment
+# Production Backend Dockerfile - Fixed for missing package-lock.json
+FROM node:18-alpine AS build
 
-FROM node:12-alpine
-
-# Do not use 'COPY . .' to copy all files. Copying all files will force a build even if no client files have been modified
-
-# Set app directory
 WORKDIR /app
 
-# Environment variables
-ENV NODE_OPTIONS=--max_old_space_size=4096
-
-# Install
+# Copy package files (handle missing package-lock.json gracefully)
 COPY package.json ./
-COPY sync-package-lock ./
-# In production, we will use the package lock generated in the development process. No versions surprises.
-RUN npm clean-install
+COPY package-lock.json* ./
 
-# Build
-COPY nodemon.json ./
-COPY tsconfig.json ./
-COPY src ./src
+# Install dependencies (fallback if package-lock.json missing)
+RUN npm ci --only=production || npm install --only=production
 
-RUN npm run build
+# Copy source code
+COPY . .
 
-# Migrations
-COPY database ./
-# Run migrations. This is also responsible of copying node_modules and package-lock.json to host machine.
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+# Production stage
+FROM node:18-alpine AS production
 
-ENTRYPOINT [ "/docker-entrypoint.sh" ]
+WORKDIR /app
 
-# CMD is not executed when command is defined in docker compose
-CMD [ "npm", "run", "serve" ]
+# Copy node_modules and source from build stage
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app .
+
+# Create necessary directories for BMI app
+RUN mkdir -p uploads bmi-data reports public
+
+# Set production environment
+ENV NODE_ENV=production
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
+
+# Start the application
+CMD ["npm", "run", "serve"]
